@@ -131,8 +131,8 @@ app.on('ready', async () => {
   }
 
   const url = isDev
-    ? 'http://localhost:8000/options'
-    : `${app.getAppPath()}/renderer/out/options.html`;
+    ? 'http://localhost:8000/start'
+    : `${app.getAppPath()}/renderer/out/start.html`;
 
   mainWindow.setMenu(null);
   mainWindow.loadURL(url);
