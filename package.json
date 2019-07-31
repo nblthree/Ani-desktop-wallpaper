@@ -1,0 +1,117 @@
+{
+  "name": "Ani-desktop-wallpaper",
+  "productName": "Ani desktop wallpaper",
+  "description": "Set a new wallpaper in a chosen interval with chosen tags",
+  "version": "1.0.0",
+  "repository": "MarchWorks/Ani-desktop-wallpaper",
+  "main": "main/index.js",
+  "scripts": {
+    "dev": "electron .",
+    "build": "yarn build-renderer && yarn build-app",
+    "build-app": "electron-builder",
+    "build-renderer": "cross-env NODE_ENV=production next build renderer && next export renderer",
+    "test": "yarn test-lint",
+    "test-lint": "xo",
+    "lintfix": "xo --fix"
+  },
+  "build": {
+    "appId": "com.marchworks.ani-desktop-wallpaper",
+    "files": [
+      "**/*",
+      "!renderer",
+      "renderer/out"
+    ],
+    "win": {
+      "icon": "main/static/icons/icon.png"
+    },
+    "mac": {
+      "icon": "main/static/icons/icon.png",
+      "extendInfo": {
+        "LSUIElement": 1
+      }
+    },
+    "asar": true
+  },
+  "author": "MarchWorks<edel.f.wool@gmail.com>",
+  "license": "MIT",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "yarn test-lint",
+      "prettier --single-quote --write --no-editorconfig",
+      "git add"
+    ]
+  },
+  "xo": {
+    "parser": "babel-eslint",
+    "extends": [
+      "prettier",
+      "prettier/react",
+      "plugin:react/recommended"
+    ],
+    "env": [
+      "browser",
+      "node"
+    ],
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    },
+    "rules": {
+      "camelcase": 0,
+      "no-async-promise-executor": 0,
+      "no-await-in-loop": 0,
+      "no-negated-condition": 0,
+      "no-void": 0,
+      "react/react-in-jsx-scope": 0,
+      "react/prop-types": 0,
+      "require-atomic-updates": 0,
+      "import/no-unresolved": 0,
+      "import/no-extraneous-dependencies": 0,
+      "complexity": 0,
+      "max-params": 0,
+      "lines-between-class-members": 0,
+      "semi": [
+        2,
+        "always"
+      ]
+    },
+    "ignores": [
+      "dist",
+      "renderer/.next",
+      "renderer/out"
+    ]
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.2",
+    "cross-env": "^5.2.0",
+    "electron": "^6.0.0",
+    "electron-builder": "^21.1.5",
+    "eslint": "^6.1.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-react": "^7.14.3",
+    "husky": "^3.0.1",
+    "lint-staged": "^9.2.1",
+    "next": "^9.0.2",
+    "prettier": "^1.18.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "xo": "^0.24.0"
+  },
+  "dependencies": {
+    "electron-is-dev": "^1.1.0",
+    "electron-next": "^3.1.5",
+    "electron-store": "^4.0.0",
+    "fs-extra": "^8.0.1",
+    "react-dnd": "^5.0.0",
+    "react-dnd-html5-backend": "^3.0.2",
+    "react-tag-input": "^6.4.0",
+    "request": "^2.88.0",
+    "wallpaper": "^4.4.1"
+  }
+}
