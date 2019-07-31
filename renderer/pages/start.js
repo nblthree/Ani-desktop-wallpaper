@@ -130,12 +130,13 @@ export default class Options extends Component {
             </div>
 
             <div className="option">
-              <h3>Time interval between new episodes check.</h3>
+              <h3>Time interval between new Wallpaper.</h3>
               <div className="flex">
                 <select
                   onChange={this.handleTimeInterval}
                   value={this.state.options.timeInterval}
                 >
+                  <option value="5">5 minutes</option>
                   <option value="10">10 minutes</option>
                   <option value="15">15 minutes</option>
                   <option value="20">20 minutes</option>
