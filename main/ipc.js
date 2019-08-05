@@ -40,8 +40,9 @@ module.exports = app => {
   const defaultOptions = {
     rating: 's',
     tags: [],
-    timeInterval: '15',
-    runOnBoot: true
+    timeInterval: 15,
+    runOnBoot: true,
+    pause: false
   };
 
   app.setLoginItemSettings({
@@ -50,9 +51,10 @@ module.exports = app => {
     path: app.getPath('exe')
   });
 
-  let { timeInterval } = { ...defaultOptions, ...(store.get('options') || {}) };
-  let { tags } = { ...defaultOptions, ...(store.get('options') || {}) };
-  let { rating } = { ...defaultOptions, ...(store.get('options') || {}) };
+  let { timeInterval, tags, rating, pause } = {
+    ...defaultOptions,
+    ...(store.get('options') || {})
+  };
   let timer = null;
 
   ipcMain.on('get-options', event => {
@@ -61,27 +63,35 @@ module.exports = app => {
   });
 
   ipcMain.on('set-rating', (event, arg) => {
+    if (timer) {
+      clearTimeout(timer);
+    }
+
     const options = { ...defaultOptions, ...(store.get('options') || {}) };
     options.rating = arg;
     rating = arg;
-    clearTimeout(timer);
-    new_wallpaper();
     store.set('options', options);
+
+    new_wallpaper();
   });
 
   ipcMain.on('set-tags', (event, arg) => {
+    if (timer) {
+      clearTimeout(timer);
+    }
+
     const options = { ...defaultOptions, ...(store.get('options') || {}) };
     options.tags = arg;
-    tags = arg;
-    clearTimeout(timer);
-    new_wallpaper();
+    tags = options.tags;
     store.set('options', options);
+
+    new_wallpaper();
   });
 
   ipcMain.on('set-timeInterval', (event, arg) => {
     const options = { ...defaultOptions, ...(store.get('options') || {}) };
-    options.timeInterval = arg;
-    timeInterval = arg;
+    options.timeInterval = Number(arg);
+    timeInterval = options.timeInterval;
     store.set('options', options);
   });
 
@@ -93,6 +103,37 @@ module.exports = app => {
       path: app.getPath('exe')
     });
     store.set('options', options);
+  });
+
+  const func = {
+    like: () => {
+      const likes = store.get('likes') || [];
+      const illustration = store.get('illustration');
+      if (likes.some(val => val.id === illustration.id)) return;
+      likes.push(illustration);
+      store.set('likes', likes);
+    },
+    pauseStart: () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+
+      const options = { ...defaultOptions, ...(store.get('options') || {}) };
+      options.pause = !options.pause;
+      store.set('options', options);
+
+      if (!options.pause) {
+        new_wallpaper();
+      }
+    }
+  };
+
+  ipcMain.on('set-pause', () => {
+    func.pauseStart();
+  });
+
+  ipcMain.on('set-like', () => {
+    func.like();
   });
 
   const get_images_data = page => {
@@ -129,7 +170,7 @@ module.exports = app => {
       );
 
       if (filtered_images.length === 0) {
-        resolve('done');
+        resolve(images_data.length);
       }
 
       const img_name =
@@ -138,13 +179,14 @@ module.exports = app => {
         filtered_images[img].file_url.replace(/(.*)?\./, '');
       download(filtered_images[img].file_url, img_name, async () => {
         await wallpaper.set(img_name);
+        store.set('illustration', filtered_images[img]);
         if (filtered_images.length === img + 1) {
-          resolve('done');
+          resolve(images_data.length);
         } else {
-          if (timeInterval === 'onBoot') return;
+          if (timeInterval === 0) return;
           timer = setTimeout(() => {
             resolve(download_new_wallpaper(images_data, img + 1));
-          }, 1000 * 60 * (Number(timeInterval) || 15));
+          }, 1000 * 60 * timeInterval);
         }
       });
     });
@@ -152,12 +194,20 @@ module.exports = app => {
 
   const new_wallpaper = async (page = 1) => {
     const images_data = await get_images_data(page);
-    await download_new_wallpaper(images_data);
-    if (timeInterval === 'onBoot') return;
+    const reStart = await download_new_wallpaper(images_data);
+    if (reStart === 0) {
+      page = 0;
+    }
+
+    if (timeInterval === 0) return;
     setTimeout(() => {
       new_wallpaper(page + 1, tags);
-    }, 1000 * 60 * (Number(timeInterval) || 15));
+    }, 1000 * 60 * timeInterval);
   };
 
-  new_wallpaper();
+  if (!pause) {
+    new_wallpaper();
+  }
+
+  return func;
 };

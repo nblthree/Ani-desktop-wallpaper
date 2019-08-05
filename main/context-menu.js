@@ -3,7 +3,7 @@ const {
   shell
 } = require('electron');
 
-module.exports = async () => {
+module.exports = async func => {
   // We have to explicitly add a "Main" item on linux, otherwise
   // there would be no way to toggle the main mainWindow
   const prependItems =
@@ -20,6 +20,18 @@ module.exports = async () => {
 
   return buildFromTemplate(
     prependItems.concat([
+      {
+        label: 'Pause / Start',
+        click() {
+          func.pauseStart();
+        }
+      },
+      {
+        label: 'Like current illustration',
+        click() {
+          func.like();
+        }
+      },
       {
         label: 'Open issue',
         click() {

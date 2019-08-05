@@ -42,6 +42,7 @@ export default class Options extends Component {
     this.handleTags = this.handleTags.bind(this);
     this.handleTimeInterval = this.handleTimeInterval.bind(this);
     this.handleRunOnBoot = this.handleRunOnBoot.bind(this);
+    this.like = this.like.bind(this);
 
     this.handleDelete = this.handleDelete.bind(this);
     this.handleAddition = this.handleAddition.bind(this);
@@ -95,6 +96,10 @@ export default class Options extends Component {
     }));
   }
 
+  like() {
+    this.ipcRenderer.send('set-like');
+  }
+
   render() {
     return (
       <Layout>
@@ -130,12 +135,15 @@ export default class Options extends Component {
             </div>
 
             <div className="option">
-              <h3>Time interval between new Wallpaper.</h3>
+              <h3>Time interval before setting a new Wallpaper.</h3>
               <div className="flex">
                 <select
                   onChange={this.handleTimeInterval}
                   value={this.state.options.timeInterval}
                 >
+                  <option value="0.5">30 seconds</option>
+                  <option value="1">1 minutes</option>
+                  <option value="2">2 minutes</option>
                   <option value="5">5 minutes</option>
                   <option value="10">10 minutes</option>
                   <option value="15">15 minutes</option>
@@ -144,7 +152,7 @@ export default class Options extends Component {
                   <option value="40">40 minutes</option>
                   <option value="50">50 minutes</option>
                   <option value="60">1 hour</option>
-                  <option value="onBoot">On boot</option>
+                  <option value="0">On boot</option>
                 </select>
               </div>
             </div>
@@ -163,6 +171,17 @@ export default class Options extends Component {
                   <option value="true">Yes</option>
                   <option value="false">No</option>
                 </select>
+              </div>
+            </div>
+
+            <div className="option">
+              <h3>Additional options</h3>
+              <div className="unflex">
+                <div>
+                  <button onClick={() => this.like}>
+                    Like the current illustration
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -205,14 +224,18 @@ export default class Options extends Component {
               display: flex;
               margin-left: 20px;
             }
-            .flex button {
-              height: 27px;
+            .unflex {
+              margin-left: 20px;
+            }
+            .unflex button {
+              height: 30px;
               outline: none;
               border: 0;
-              margin: auto 0;
+              margin-top: 20px;
               background-color: #3f4142;
-              color: aliceblue;
+              color: #fff;
               cursor: pointer;
+              box-shadow: 0 0 20px 0px #5f5f5f;
             }
             .option {
               padding: 10px;

@@ -108,14 +108,13 @@ app.on('ready', async () => {
   tray.on('double-click', toggleActivity);
 
   let submenuShown = false;
-
+  const func = prepareIpc(app);
+  const menu = await getContextMenu(func);
   tray.on('right-click', async event => {
     if (mainWindow.isVisible()) {
       mainWindow.hide();
       return;
     }
-
-    const menu = await getContextMenu();
 
     // Toggle submenu
     tray.popUpContextMenu(submenuShown ? null : menu);
@@ -123,8 +122,6 @@ app.on('ready', async () => {
 
     event.preventDefault();
   });
-
-  prepareIpc(app);
 
   if (isDev) {
     mainWindow.webContents.openDevTools();
