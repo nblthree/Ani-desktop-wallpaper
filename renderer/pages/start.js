@@ -202,6 +202,7 @@ export default class Options extends Component {
                   </button>
                 </div>
                 <div>
+                  <h4>Taskbar Color (Windows only)</h4>
                   <ChromePicker onChangeComplete={this.handleChangeComplete} />
                 </div>
               </div>

@@ -10,6 +10,7 @@ const request = require('request');
 const wallpaper = require('wallpaper');
 
 const binary = join(__dirname, 'bin/TranslucentTB.exe');
+const isWinOS = process.platform === 'win32';
 
 const download = function(uri, filename, callback) {
   try {
@@ -141,13 +142,15 @@ module.exports = app => {
   });
 
   ipcMain.on('set-taskbarColor', (event, arg) => {
-    execFile(binary, ['--no-tray', '--transparent', '--tint', arg], err => {
-      if (err) {
-        console.error(err);
-      } else {
-        store.set('taskbarColor', arg);
-      }
-    });
+    if (isWinOS) {
+      execFile(binary, ['--no-tray', '--transparent', '--tint', arg], err => {
+        if (err) {
+          console.error(err);
+        } else {
+          store.set('taskbarColor', arg);
+        }
+      });
+    }
   });
 
   const get_images_data = page => {
@@ -224,7 +227,7 @@ module.exports = app => {
   }
 
   const taskbarColor = store.get('taskbarColor');
-  if (taskbarColor) {
+  if (taskbarColor && isWinOS) {
     execFile(
       binary,
       ['--no-tray', '--transparent', '--tint', taskbarColor],
