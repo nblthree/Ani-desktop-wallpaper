@@ -1,11 +1,15 @@
 // Native
 const fs = require('fs');
+const { join } = require('path');
+const { execFile } = require('child_process');
 // Packages
 const { ipcMain } = require('electron');
 const isDev = require('electron-is-dev');
 const Store = require('electron-store');
 const request = require('request');
 const wallpaper = require('wallpaper');
+
+const binary = join(__dirname, 'bin/TranslucentTB.exe');
 
 const download = function(uri, filename, callback) {
   try {
@@ -136,6 +140,16 @@ module.exports = app => {
     func.like();
   });
 
+  ipcMain.on('set-taskbarColor', (event, arg) => {
+    execFile(binary, ['--no-tray', '--transparent', '--tint', arg], err => {
+      if (err) {
+        console.error(err);
+      } else {
+        store.set('taskbarColor', arg);
+      }
+    });
+  });
+
   const get_images_data = page => {
     return new Promise(resolve => {
       request(
@@ -207,6 +221,19 @@ module.exports = app => {
 
   if (!pause) {
     new_wallpaper();
+  }
+
+  const taskbarColor = store.get('taskbarColor');
+  if (taskbarColor) {
+    execFile(
+      binary,
+      ['--no-tray', '--transparent', '--tint', taskbarColor],
+      err => {
+        if (err) {
+          console.error(err);
+        }
+      }
+    );
   }
 
   return func;

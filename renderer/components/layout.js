@@ -30,7 +30,7 @@ function Layout(props) {
         #__next {
           width: 100%;
           height: 100%;
-          min-width: 800px;
+          min-width: 650px;
           min-height: 600px;
           background-color: #96999c;
           color: #dddddd;

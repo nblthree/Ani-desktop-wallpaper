@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { WithContext as ReactTags } from 'react-tag-input';
+import { ChromePicker } from 'react-color';
 import Layout from '../components/layout';
 
 const KeyCodes = {
@@ -8,6 +9,17 @@ const KeyCodes = {
 };
 
 const delimiters = [KeyCodes.comma, KeyCodes.enter];
+
+const rgba2hex = ({ r, g, b, a }) => {
+  let hex =
+    (r | (1 << 8)).toString(16).slice(1) +
+    (g | (1 << 8)).toString(16).slice(1) +
+    (b | (1 << 8)).toString(16).slice(1);
+  a = ((a * 255) | (1 << 8)).toString(16).slice(1);
+  hex = a + hex;
+
+  return hex;
+};
 
 export default class Options extends Component {
   constructor(props) {
@@ -46,6 +58,7 @@ export default class Options extends Component {
 
     this.handleDelete = this.handleDelete.bind(this);
     this.handleAddition = this.handleAddition.bind(this);
+    this.handleChangeComplete = this.handleChangeComplete.bind(this);
   }
 
   componentDidMount() {
@@ -98,6 +111,12 @@ export default class Options extends Component {
 
   like() {
     this.ipcRenderer.send('set-like');
+  }
+
+  handleChangeComplete({ rgb }) {
+    const hex = rgba2hex(rgb);
+    console.log(hex);
+    this.ipcRenderer.send('set-taskbarColor', hex);
   }
 
   render() {
@@ -179,8 +198,11 @@ export default class Options extends Component {
               <div className="unflex">
                 <div>
                   <button onClick={() => this.like}>
-                    Like the current illustration
+                    Add current illustration to like list
                   </button>
+                </div>
+                <div>
+                  <ChromePicker onChangeComplete={this.handleChangeComplete} />
                 </div>
               </div>
             </div>
@@ -227,11 +249,13 @@ export default class Options extends Component {
             .unflex {
               margin-left: 20px;
             }
+            .unflex > div {
+              margin-top: 20px;
+            }
             .unflex button {
               height: 30px;
               outline: none;
               border: 0;
-              margin-top: 20px;
               background-color: #3f4142;
               color: #fff;
               cursor: pointer;
