@@ -47,7 +47,8 @@ module.exports = app => {
     tags: [],
     timeInterval: 15,
     runOnBoot: true,
-    pause: false
+    pause: false,
+    loopOverLikeList: false
   };
 
   app.setLoginItemSettings({
@@ -65,6 +66,12 @@ module.exports = app => {
   ipcMain.on('get-options', event => {
     const options = { ...defaultOptions, ...(store.get('options') || {}) };
     event.returnValue = options;
+  });
+
+  ipcMain.on('set-loopOverLikeList', (event, arg) => {
+    const options = { ...defaultOptions, ...(store.get('options') || {}) };
+    options.loopOverLikeList = arg;
+    store.set('options', options);
   });
 
   ipcMain.on('set-rating', (event, arg) => {

@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { ChromePicker } from 'react-color';
+import Switch from 'react-switch';
 import Layout from '../components/layout';
 
 const KeyCodes = {
@@ -54,6 +55,7 @@ export default class Options extends Component {
     this.handleTags = this.handleTags.bind(this);
     this.handleTimeInterval = this.handleTimeInterval.bind(this);
     this.handleRunOnBoot = this.handleRunOnBoot.bind(this);
+    this.handleLoopOverLikeList = this.handleLoopOverLikeList.bind(this);
     this.like = this.like.bind(this);
 
     this.handleDelete = this.handleDelete.bind(this);
@@ -102,10 +104,17 @@ export default class Options extends Component {
     }));
   }
 
-  handleRunOnBoot({ target }) {
-    this.ipcRenderer.send('set-runOnBoot', target.value === 'true');
+  handleRunOnBoot(checked) {
+    this.ipcRenderer.send('set-runOnBoot', checked);
     this.setState(prev => ({
-      options: { ...prev.options, runOnBoot: target.value === 'true' }
+      options: { ...prev.options, runOnBoot: checked }
+    }));
+  }
+
+  handleLoopOverLikeList(checked) {
+    this.ipcRenderer.send('set-loopOverLikeList', checked);
+    this.setState(prev => ({
+      options: { ...prev.options, loopOverLikeList: checked }
     }));
   }
 
@@ -139,7 +148,7 @@ export default class Options extends Component {
             </div>
 
             <div className="option">
-              <h3>Wallpaper rating</h3>
+              <h3>Illustration rating</h3>
               <div className="flex">
                 <select
                   onChange={this.handleRating}
@@ -179,32 +188,63 @@ export default class Options extends Component {
             <div className="option">
               <h3>Run on boot</h3>
               <div className="flex">
-                <select
-                  onChange={this.handleRunOnBoot}
-                  value={
-                    typeof this.state.options.runOnBoot === 'undefined'
-                      ? 'false'
-                      : this.state.options.runOnBoot.toString()
-                  }
-                >
-                  <option value="true">Yes</option>
-                  <option value="false">No</option>
-                </select>
+                <label htmlFor="run-on-boot-switch">
+                  <Switch
+                    onChange={this.handleRunOnBoot}
+                    checked={Boolean(this.state.options.runOnBoot)}
+                    onColor="#3c3c3c"
+                    offColor="#101010"
+                    onHandleColor="#f3f3f3"
+                    offHandleColor="#676767"
+                    handleDiameter={18}
+                    uncheckedIcon={false}
+                    checkedIcon={false}
+                    boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                    activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                    height={26}
+                    width={60}
+                    className="react-switch"
+                    id="run-on-boot-switch"
+                  />
+                </label>
               </div>
             </div>
 
             <div className="option">
-              <h3>Additional options</h3>
+              <h3>Like List</h3>
               <div className="unflex">
+                <label htmlFor="like-list-switch">
+                  <h4>Loop over Like List</h4>
+                  <Switch
+                    onChange={this.handleLoopOverLikeList}
+                    checked={Boolean(this.state.options.loopOverLikeList)}
+                    onColor="#3c3c3c"
+                    offColor="#101010"
+                    onHandleColor="#f3f3f3"
+                    offHandleColor="#676767"
+                    handleDiameter={18}
+                    uncheckedIcon={false}
+                    checkedIcon={false}
+                    boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                    activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                    height={26}
+                    width={60}
+                    className="react-switch"
+                    id="like-list-switch"
+                  />
+                </label>
                 <div>
                   <button onClick={() => this.like}>
-                    Add current illustration to like list
+                    Add current illustration to the Like List
                   </button>
                 </div>
-                <div>
-                  <h4>Taskbar Color (Windows only)</h4>
-                  <ChromePicker onChangeComplete={this.handleChangeComplete} />
-                </div>
+              </div>
+            </div>
+
+            <div className="option">
+              <h3>Taskbar Color (Windows only)</h3>
+              <div className="flex">
+                <ChromePicker onChangeComplete={this.handleChangeComplete} />
               </div>
             </div>
           </div>
@@ -254,16 +294,17 @@ export default class Options extends Component {
               margin-top: 20px;
             }
             .unflex button {
-              height: 30px;
+              height: 32px;
               outline: none;
               border: 0;
-              background-color: #3f4142;
+              background-color: #191919;
               color: #fff;
               cursor: pointer;
-              box-shadow: 0 0 20px 0px #5f5f5f;
+              box-shadow: inset 0 0 4px 0px #4a4a4a;
             }
             .option {
-              padding: 10px;
+              padding: 10px 10px 20px 10px;
+              border-bottom: 1px solid #2f2f2f;
             }
             option {
               font-weight: normal;
