@@ -61,7 +61,7 @@ module.exports = app => {
     ...defaultOptions,
     ...(store.get('options') || {})
   };
-  let timer = null;
+  const timer = [];
 
   ipcMain.on('get-options', event => {
     const options = { ...defaultOptions, ...(store.get('options') || {}) };
@@ -75,10 +75,6 @@ module.exports = app => {
   });
 
   ipcMain.on('set-rating', (event, arg) => {
-    if (timer) {
-      clearTimeout(timer);
-    }
-
     const options = { ...defaultOptions, ...(store.get('options') || {}) };
     options.rating = arg;
     rating = arg;
@@ -88,10 +84,6 @@ module.exports = app => {
   });
 
   ipcMain.on('set-tags', (event, arg) => {
-    if (timer) {
-      clearTimeout(timer);
-    }
-
     const options = { ...defaultOptions, ...(store.get('options') || {}) };
     options.tags = arg;
     tags = options.tags;
@@ -126,13 +118,14 @@ module.exports = app => {
       store.set('likes', likes);
     },
     pauseStart: () => {
-      if (timer) {
-        clearTimeout(timer);
-      }
-
       const options = { ...defaultOptions, ...(store.get('options') || {}) };
       options.pause = !options.pause;
       store.set('options', options);
+      const tlength = timer.length;
+      for (let i = 0; i < tlength; i++) {
+        const t = timer.shift();
+        clearTimeout(t);
+      }
 
       if (!options.pause) {
         new_wallpaper();
@@ -172,7 +165,7 @@ module.exports = app => {
           json: true
         },
         function(error, response, body) {
-          if (!error && response.statusCode === 200) {
+          if (!error && response.statusCode === 200 && body.map) {
             const images_data = body.map(val => ({
               id: val.id,
               file_url: val.file_url,
@@ -181,6 +174,8 @@ module.exports = app => {
               rating: val.rating
             }));
             resolve(images_data);
+          } else {
+            resolve(false);
           }
         }
       );
@@ -208,9 +203,17 @@ module.exports = app => {
           resolve(images_data.length);
         } else {
           if (timeInterval === 0) return;
-          timer = setTimeout(() => {
-            resolve(download_new_wallpaper(images_data, img + 1));
-          }, 1000 * 60 * timeInterval);
+          const tlength = timer.length;
+          for (let i = 0; i < tlength; i++) {
+            const t = timer.shift();
+            clearTimeout(t);
+          }
+
+          timer.push(
+            setTimeout(() => {
+              resolve(download_new_wallpaper(images_data, img + 1));
+            }, 1000 * 60 * timeInterval)
+          );
         }
       });
     });
@@ -218,15 +221,27 @@ module.exports = app => {
 
   const new_wallpaper = async (page = 1) => {
     const images_data = await get_images_data(page);
+    if (!images_data) {
+      new_wallpaper(page);
+    }
+
     const reStart = await download_new_wallpaper(images_data);
     if (reStart === 0) {
       page = 0;
     }
 
     if (timeInterval === 0) return;
-    setTimeout(() => {
-      new_wallpaper(page + 1, tags);
-    }, 1000 * 60 * timeInterval);
+    const tlength = timer.length;
+    for (let i = 0; i < tlength; i++) {
+      const t = timer.shift();
+      clearTimeout(t);
+    }
+
+    timer.push(
+      setTimeout(() => {
+        new_wallpaper(page + 1, tags);
+      }, 1000 * 60 * timeInterval)
+    );
   };
 
   if (!pause) {
