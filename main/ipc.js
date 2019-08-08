@@ -223,6 +223,7 @@ module.exports = app => {
     const images_data = await get_images_data(page);
     if (!images_data) {
       new_wallpaper(page);
+      return;
     }
 
     const reStart = await download_new_wallpaper(images_data);
