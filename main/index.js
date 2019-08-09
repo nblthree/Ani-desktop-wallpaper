@@ -88,7 +88,6 @@ app.on('ready', async () => {
     }
   };
 
-  tray.on('click', toggleActivity);
   tray.on('double-click', toggleActivity);
 
   let submenuShown = false;
