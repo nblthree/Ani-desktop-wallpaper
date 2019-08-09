@@ -66,14 +66,13 @@ module.exports = app => {
   const timer = [];
 
   const likeListLooper = (list, index = 0) => {
-    if (list.length === 0) return;
     const tlength = timer.length;
     for (let i = 0; i < tlength; i++) {
       const t = timer.shift();
       clearTimeout(t);
     }
 
-    if (timeInterval === 0) return;
+    if (timeInterval === 0 || list.length === 0) return;
 
     timer.push(
       setTimeout(async () => {
@@ -107,11 +106,13 @@ module.exports = app => {
     options.loopOverLikeList = arg;
     store.set('options', options);
 
-    if (arg) {
-      const list = store.get('likes') || [];
-      likeListLooper(list);
-    } else {
-      new_wallpaper();
+    if (!options.pause) {
+      if (arg) {
+        const list = store.get('likes') || [];
+        likeListLooper(list);
+      } else {
+        new_wallpaper();
+      }
     }
   });
 
@@ -187,7 +188,12 @@ module.exports = app => {
       }
 
       if (!options.pause) {
-        new_wallpaper();
+        if (options.loopOverLikeList) {
+          const list = store.get('likes') || [];
+          likeListLooper(list);
+        } else {
+          new_wallpaper();
+        }
       }
     }
   };
