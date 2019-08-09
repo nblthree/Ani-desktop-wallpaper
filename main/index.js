@@ -5,12 +5,14 @@ const { join } = require('path');
 const { BrowserWindow, app, Tray, dialog } = require('electron');
 const isDev = require('electron-is-dev');
 const prepareNext = require('electron-next');
+const log = require('electron-log');
 
 const prepareIpc = require('./ipc');
 const getContextMenu = require('./context-menu');
 
 process.on('uncaughtException', error => {
   console.error(error);
+  log.error(error);
 
   dialog.showMessageBox({
     title: 'Unexpected Error',
@@ -25,6 +27,7 @@ process.on('uncaughtException', error => {
 
 process.on('unhandledRejection', error => {
   console.error(error);
+  log.error(error);
 
   dialog.showMessageBox({
     title: 'Unexpected Error',

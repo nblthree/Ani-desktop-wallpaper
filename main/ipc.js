@@ -8,6 +8,7 @@ const isDev = require('electron-is-dev');
 const Store = require('electron-store');
 const request = require('request');
 const wallpaper = require('wallpaper');
+const log = require('electron-log');
 
 const move = require('./utils/move');
 
@@ -16,9 +17,10 @@ const isWinOS = process.platform === 'win32';
 
 const download = function(uri, filename, callback) {
   try {
-    request.head(uri, function(err, res) {
-      if (err) {
-        console.error(err);
+    request.head(uri, function(error, res) {
+      if (error) {
+        console.error(error);
+        log.error(error);
         setTimeout(() => {
           download(uri, filename, callback);
         }, 5000);
@@ -33,6 +35,7 @@ const download = function(uri, filename, callback) {
     });
   } catch (error) {
     console.error(error);
+    log.error(error);
   }
 };
 
@@ -77,7 +80,11 @@ module.exports = app => {
     timer.push(
       setTimeout(async () => {
         if (fs.existsSync(list[index].pathname)) {
-          await wallpaper.set(list[index].pathname);
+          try {
+            await wallpaper.set(list[index].pathname);
+          } catch (error) {
+            log.error(error);
+          }
         } else {
           let likes = store.get('likes') || [];
           const illustration = list[index];
@@ -102,6 +109,7 @@ module.exports = app => {
   });
 
   ipcMain.on('set-loopOverLikeList', (event, arg) => {
+    log.info(`set-loopOverLikeList: ${arg}`);
     const options = { ...defaultOptions, ...(store.get('options') || {}) };
     options.loopOverLikeList = arg;
     store.set('options', options);
@@ -117,6 +125,7 @@ module.exports = app => {
   });
 
   ipcMain.on('set-rating', (event, arg) => {
+    log.info(`set-rating: ${arg}`);
     const options = { ...defaultOptions, ...(store.get('options') || {}) };
     options.rating = arg;
     rating = arg;
@@ -126,6 +135,7 @@ module.exports = app => {
   });
 
   ipcMain.on('set-tags', (event, arg) => {
+    log.info(`set-tags: ${arg.join(',')}`);
     const options = { ...defaultOptions, ...(store.get('options') || {}) };
     options.tags = arg;
     tags = options.tags;
@@ -135,6 +145,7 @@ module.exports = app => {
   });
 
   ipcMain.on('set-timeInterval', (event, arg) => {
+    log.info(`set-timeInterval: ${arg}`);
     const options = { ...defaultOptions, ...(store.get('options') || {}) };
     options.timeInterval = Number(arg);
     timeInterval = options.timeInterval;
@@ -142,6 +153,7 @@ module.exports = app => {
   });
 
   ipcMain.on('set-runOnBoot', (event, arg) => {
+    log.info(`set-runOnBoot: ${arg}`);
     const options = { ...defaultOptions, ...(store.get('options') || {}) };
     options.runOnBoot = arg;
     app.setLoginItemSettings({
@@ -156,6 +168,7 @@ module.exports = app => {
       const likes = store.get('likes') || [];
       const illustration = store.get('illustration');
       if (likes.some(val => val.id === illustration.id)) return;
+      log.info(`Like-illustration: ${illustration.id}`);
 
       const arr = illustration.pathname.split('/');
       const index = arr.length - 1;
@@ -169,8 +182,11 @@ module.exports = app => {
 
       arr.splice(index, 0, 'likelist');
       const newPathname = arr.join('/');
-      move(illustration.pathname, newPathname, err => {
-        if (err) console.error(err);
+      move(illustration.pathname, newPathname, error => {
+        if (error) {
+          console.error(error);
+          log.error(error);
+        }
       });
 
       illustration.pathname = newPathname;
@@ -195,6 +211,8 @@ module.exports = app => {
           new_wallpaper();
         }
       }
+
+      log.info(`pause-start: ${options.pause}`);
     }
   };
 
@@ -208,9 +226,11 @@ module.exports = app => {
 
   ipcMain.on('set-taskbarColor', (event, arg) => {
     if (isWinOS) {
-      execFile(binary, ['--no-tray', '--transparent', '--tint', arg], err => {
-        if (err) {
-          console.error(err);
+      log.info(`set-taskbarColor: ${arg}`);
+      execFile(binary, ['--no-tray', '--transparent', '--tint', arg], error => {
+        if (error) {
+          console.error(error);
+          log.error(error);
         } else {
           store.set('taskbarColor', arg);
         }
@@ -240,6 +260,8 @@ module.exports = app => {
             }));
             resolve(images_data);
           } else {
+            log.error(error);
+            log.info(body);
             resolve(false);
           }
         }
@@ -261,18 +283,26 @@ module.exports = app => {
         filtered_images[img].id
       }.${filtered_images[img].file_url.replace(/(.*)?\./, '')}`;
       download(filtered_images[img].file_url, pathname, async () => {
-        await wallpaper.set(pathname);
+        try {
+          await wallpaper.set(pathname);
+        } catch (error) {
+          log.error(error);
+        }
 
         const old_pathname =
           store.get('illustration') && store.get('illustration').pathname;
         if (old_pathname && old_pathname !== pathname) {
-          fs.stat(old_pathname, function(err) {
-            if (err) {
-              return console.error(err);
+          fs.stat(old_pathname, function(error) {
+            if (error) {
+              log.error(error);
+              return console.error(error);
             }
 
-            fs.unlink(old_pathname, function(err) {
-              if (err) return console.error(err);
+            fs.unlink(old_pathname, function(error) {
+              if (error) {
+                log.error(error);
+                return console.error(error);
+              }
             });
           });
         }
@@ -322,6 +352,7 @@ module.exports = app => {
     timer.push(
       setTimeout(() => {
         new_wallpaper(page + 1, tags);
+        log.info(`New page: ${page + 1}`);
       }, 1000 * 60 * timeInterval)
     );
   };
@@ -340,9 +371,10 @@ module.exports = app => {
     execFile(
       binary,
       ['--no-tray', '--transparent', '--tint', taskbarColor],
-      err => {
-        if (err) {
-          console.error(err);
+      error => {
+        if (error) {
+          console.error(error);
+          log.error(error);
         }
       }
     );
