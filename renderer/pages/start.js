@@ -49,6 +49,8 @@ export default class Options extends Component {
     this.state = {
       tags: [],
       suggestions: tags,
+      runOnBoot: false,
+      loopOverLikeList: false,
       options:
         (this.ipcRenderer && this.ipcRenderer.sendSync('get-options')) || []
     };
@@ -68,7 +70,9 @@ export default class Options extends Component {
   componentDidMount() {
     this.setState(state => {
       return {
-        tags: state.options.tags.map(val => ({ id: val, text: val }))
+        tags: state.options.tags.map(val => ({ id: val, text: val })),
+        runOnBoot: state.options.runOnBoot,
+        loopOverLikeList: state.options.loopOverLikeList
       };
     });
   }
@@ -109,14 +113,16 @@ export default class Options extends Component {
   handleRunOnBoot(checked) {
     this.ipcRenderer.send('set-runOnBoot', checked);
     this.setState(prev => ({
-      options: { ...prev.options, runOnBoot: checked }
+      options: { ...prev.options, runOnBoot: checked },
+      runOnBoot: checked
     }));
   }
 
   handleLoopOverLikeList(checked) {
     this.ipcRenderer.send('set-loopOverLikeList', checked);
     this.setState(prev => ({
-      options: { ...prev.options, loopOverLikeList: checked }
+      options: { ...prev.options, loopOverLikeList: checked },
+      loopOverLikeList: checked
     }));
   }
 
@@ -194,7 +200,7 @@ export default class Options extends Component {
                 <label htmlFor="run-on-boot-switch">
                   <Switch
                     onChange={this.handleRunOnBoot}
-                    checked={Boolean(this.state.options.runOnBoot)}
+                    checked={Boolean(this.state.runOnBoot)}
                     onColor="#3c3c3c"
                     offColor="#101010"
                     onHandleColor="#f3f3f3"
@@ -220,7 +226,7 @@ export default class Options extends Component {
                   <h4>Loop over Like List</h4>
                   <Switch
                     onChange={this.handleLoopOverLikeList}
-                    checked={Boolean(this.state.options.loopOverLikeList)}
+                    checked={Boolean(this.state.loopOverLikeList)}
                     onColor="#3c3c3c"
                     offColor="#101010"
                     onHandleColor="#f3f3f3"

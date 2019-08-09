@@ -59,11 +59,43 @@ module.exports = app => {
     path: app.getPath('exe')
   });
 
-  let { timeInterval, tags, rating, pause } = {
+  let { timeInterval, tags, rating, pause, loopOverLikeList } = {
     ...defaultOptions,
     ...(store.get('options') || {})
   };
   const timer = [];
+
+  const likeListLooper = (list, index = 0) => {
+    if (list.length === 0) return;
+    const tlength = timer.length;
+    for (let i = 0; i < tlength; i++) {
+      const t = timer.shift();
+      clearTimeout(t);
+    }
+
+    if (timeInterval === 0) return;
+
+    timer.push(
+      setTimeout(async () => {
+        if (fs.existsSync(list[index].pathname)) {
+          await wallpaper.set(list[index].pathname);
+        } else {
+          let likes = store.get('likes') || [];
+          const illustration = list[index];
+
+          likes = likes.filter(val => val.id !== illustration.id);
+          store.set('likes', likes);
+        }
+
+        index += 1;
+        if (index === list.length) {
+          index = 0;
+        }
+
+        likeListLooper(list, index);
+      }, 1000 * 60 * timeInterval)
+    );
+  };
 
   ipcMain.on('get-options', event => {
     const options = { ...defaultOptions, ...(store.get('options') || {}) };
@@ -74,6 +106,13 @@ module.exports = app => {
     const options = { ...defaultOptions, ...(store.get('options') || {}) };
     options.loopOverLikeList = arg;
     store.set('options', options);
+
+    if (arg) {
+      const list = store.get('likes') || [];
+      likeListLooper(list);
+    } else {
+      new_wallpaper();
+    }
   });
 
   ipcMain.on('set-rating', (event, arg) => {
@@ -116,8 +155,6 @@ module.exports = app => {
       const likes = store.get('likes') || [];
       const illustration = store.get('illustration');
       if (likes.some(val => val.id === illustration.id)) return;
-      likes.push(illustration);
-      store.set('likes', likes);
 
       const arr = illustration.pathname.split('/');
       const index = arr.length - 1;
@@ -134,6 +171,10 @@ module.exports = app => {
       move(illustration.pathname, newPathname, err => {
         if (err) console.error(err);
       });
+
+      illustration.pathname = newPathname;
+      likes.push(illustration);
+      store.set('likes', likes);
     },
     pauseStart: () => {
       const options = { ...defaultOptions, ...(store.get('options') || {}) };
@@ -233,12 +274,13 @@ module.exports = app => {
         if (filtered_images.length === img + 1) {
           resolve(images_data.length);
         } else {
-          if (timeInterval === 0) return;
           const tlength = timer.length;
           for (let i = 0; i < tlength; i++) {
             const t = timer.shift();
             clearTimeout(t);
           }
+
+          if (timeInterval === 0) return;
 
           timer.push(
             setTimeout(() => {
@@ -251,6 +293,12 @@ module.exports = app => {
   };
 
   const new_wallpaper = async (page = 1) => {
+    const tlength = timer.length;
+    for (let i = 0; i < tlength; i++) {
+      const t = timer.shift();
+      clearTimeout(t);
+    }
+
     const images_data = await get_images_data(page);
     if (!images_data) {
       new_wallpaper(page);
@@ -263,11 +311,6 @@ module.exports = app => {
     }
 
     if (timeInterval === 0) return;
-    const tlength = timer.length;
-    for (let i = 0; i < tlength; i++) {
-      const t = timer.shift();
-      clearTimeout(t);
-    }
 
     timer.push(
       setTimeout(() => {
@@ -277,7 +320,12 @@ module.exports = app => {
   };
 
   if (!pause) {
-    new_wallpaper();
+    if (loopOverLikeList) {
+      const list = store.get('likes') || [];
+      likeListLooper(list);
+    } else {
+      new_wallpaper();
+    }
   }
 
   const taskbarColor = store.get('taskbarColor');
