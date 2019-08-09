@@ -55,22 +55,6 @@ app.on('ready', async () => {
 
   const tray = new Tray(join(__dirname, 'static/icons/icon.png'));
 
-  const states = {
-    hide: false,
-    show: true,
-    minimize: false,
-    restore: true,
-    focus: true
-  };
-
-  for (const state of Object.keys(states)) {
-    const highlighted = states[state];
-    mainWindow.on(state, () => {
-      // Highlight the tray or don't
-      tray.setHighlightMode(highlighted ? 'always' : 'selection');
-    });
-  }
-
   const gotInstanceLock = app.requestSingleInstanceLock();
 
   if (!gotInstanceLock) {

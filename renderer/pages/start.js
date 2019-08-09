@@ -3,11 +3,7 @@ import { WithContext as ReactTags } from 'react-tag-input';
 import { ChromePicker } from 'react-color';
 import Switch from 'react-switch';
 import Layout from '../components/layout';
-import tagsData from '../data/tag';
-
-const tags = tagsData.map(val => {
-  return { id: val.name, text: val.name };
-});
+import tags from '../data/tag';
 
 const KeyCodes = {
   comma: 188,
@@ -28,7 +24,7 @@ const rgba2hex = ({ r, g, b, a }) => {
 };
 
 const getQueryIndex = (query, item) => {
-  return item.text.indexOf(query.toLowerCase());
+  return item.id.indexOf(query.toLowerCase());
 };
 
 const filterSuggestions = (query, suggestions) => {
@@ -130,7 +126,6 @@ export default class Options extends Component {
 
   handleChangeComplete({ rgb }) {
     const hex = rgba2hex(rgb);
-    console.log(hex);
     this.ipcRenderer.send('set-taskbarColor', hex);
   }
 
@@ -150,6 +145,7 @@ export default class Options extends Component {
                   handleAddition={this.handleAddition}
                   delimiters={delimiters}
                   handleFilterSuggestions={filterSuggestions}
+                  labelField="id"
                 />
               </div>
             </div>
@@ -241,7 +237,7 @@ export default class Options extends Component {
                   />
                 </label>
                 <div>
-                  <button onClick={() => this.like}>
+                  <button onClick={() => this.like()}>
                     Add current illustration to the Like List
                   </button>
                 </div>

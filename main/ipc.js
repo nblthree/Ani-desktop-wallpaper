@@ -9,6 +9,8 @@ const Store = require('electron-store');
 const request = require('request');
 const wallpaper = require('wallpaper');
 
+const move = require('./utils/move');
+
 const binary = join(__dirname, 'bin/TranslucentTB.exe');
 const isWinOS = process.platform === 'win32';
 
@@ -116,6 +118,22 @@ module.exports = app => {
       if (likes.some(val => val.id === illustration.id)) return;
       likes.push(illustration);
       store.set('likes', likes);
+
+      const arr = illustration.pathname.split('/');
+      const index = arr.length - 1;
+
+      let directoryPath = illustration.pathname.split('/');
+      directoryPath[index] = 'likelist';
+      directoryPath = directoryPath.join('/');
+      if (!fs.existsSync(directoryPath)) {
+        fs.mkdirSync(directoryPath);
+      }
+
+      arr.splice(index, 0, 'likelist');
+      const newPathname = arr.join('/');
+      move(illustration.pathname, newPathname, err => {
+        if (err) console.error(err);
+      });
     },
     pauseStart: () => {
       const options = { ...defaultOptions, ...(store.get('options') || {}) };
@@ -206,7 +224,7 @@ module.exports = app => {
             }
 
             fs.unlink(old_pathname, function(err) {
-              if (err) return console.log(err);
+              if (err) return console.error(err);
             });
           });
         }
