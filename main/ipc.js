@@ -257,7 +257,8 @@ module.exports = app => {
       download(filtered_images[img].file_url, pathname, async () => {
         await wallpaper.set(pathname);
 
-        const old_pathname = store.get('illustration').pathname;
+        const old_pathname =
+          store.get('illustration') && store.get('illustration').pathname;
         if (old_pathname && old_pathname !== pathname) {
           fs.stat(old_pathname, function(err) {
             if (err) {
