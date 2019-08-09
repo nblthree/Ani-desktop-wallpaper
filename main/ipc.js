@@ -192,13 +192,26 @@ module.exports = app => {
         resolve(images_data.length);
       }
 
-      const img_name =
-        app.getPath('userData') +
-        '/wallpaper.' +
-        filtered_images[img].file_url.replace(/(.*)?\./, '');
-      download(filtered_images[img].file_url, img_name, async () => {
-        await wallpaper.set(img_name);
-        store.set('illustration', filtered_images[img]);
+      const pathname = `${app.getPath('userData')}/wallpaper_${
+        filtered_images[img].id
+      }.${filtered_images[img].file_url.replace(/(.*)?\./, '')}`;
+      download(filtered_images[img].file_url, pathname, async () => {
+        await wallpaper.set(pathname);
+
+        const old_pathname = store.get('illustration').pathname;
+        if (old_pathname && old_pathname !== pathname) {
+          fs.stat(old_pathname, function(err) {
+            if (err) {
+              return console.error(err);
+            }
+
+            fs.unlink(old_pathname, function(err) {
+              if (err) return console.log(err);
+            });
+          });
+        }
+
+        store.set('illustration', { ...filtered_images[img], pathname });
         if (filtered_images.length === img + 1) {
           resolve(images_data.length);
         } else {

@@ -3,6 +3,11 @@ import { WithContext as ReactTags } from 'react-tag-input';
 import { ChromePicker } from 'react-color';
 import Switch from 'react-switch';
 import Layout from '../components/layout';
+import tagsData from '../data/tag';
+
+const tags = tagsData.map(val => {
+  return { id: val.name, text: val.name };
+});
 
 const KeyCodes = {
   comma: 188,
@@ -22,31 +27,32 @@ const rgba2hex = ({ r, g, b, a }) => {
   return hex;
 };
 
+const getQueryIndex = (query, item) => {
+  return item.text.indexOf(query.toLowerCase());
+};
+
+const filterSuggestions = (query, suggestions) => {
+  const results = [];
+  for (let i = 0; i < suggestions.length; i++) {
+    const index = getQueryIndex(query, suggestions[i]);
+    if (index === 0) {
+      results.unshift(suggestions[i]);
+      if (results.length > 7) {
+        break;
+      }
+    }
+  }
+
+  return results;
+};
+
 export default class Options extends Component {
   constructor(props) {
     super(props);
     this.ipcRenderer = global.ipcRenderer;
     this.state = {
       tags: [],
-      suggestions: [
-        { id: 'landscape', text: 'landscape' },
-        { id: 'sky', text: 'sky' },
-        { id: 'clouds', text: 'clouds' },
-        { id: 'tree', text: 'tree' },
-        { id: 'water', text: 'water' },
-        { id: 'grass', text: 'grass' },
-        { id: 'animal', text: 'animal' },
-        { id: 'sunset', text: 'sunset' },
-        { id: 'nobody', text: 'nobody' },
-        { id: 'scenic', text: 'scenic' },
-        { id: 'flowers', text: 'flowers' },
-        { id: 'city', text: 'city' },
-        { id: 'building', text: 'building' },
-        { id: 'bird', text: 'bird' },
-        { id: 'feathers', text: 'feathers' },
-        { id: 'stairs', text: 'stairs' },
-        { id: 'forest', text: 'forest' }
-      ],
+      suggestions: tags,
       options:
         (this.ipcRenderer && this.ipcRenderer.sendSync('get-options')) || []
     };
@@ -143,6 +149,7 @@ export default class Options extends Component {
                   handleDelete={this.handleDelete}
                   handleAddition={this.handleAddition}
                   delimiters={delimiters}
+                  handleFilterSuggestions={filterSuggestions}
                 />
               </div>
             </div>
