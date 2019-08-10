@@ -55,7 +55,7 @@ export default class Options extends Component {
         (this.ipcRenderer && this.ipcRenderer.sendSync('get-options')) || []
     };
 
-    this.handleRating = this.handleRating.bind(this);
+    // This.handleRating = this.handleRating.bind(this);
     this.handleTags = this.handleTags.bind(this);
     this.handleTimeInterval = this.handleTimeInterval.bind(this);
     this.handleRunOnBoot = this.handleRunOnBoot.bind(this);
@@ -91,12 +91,12 @@ export default class Options extends Component {
     this.setState(state => ({ tags: [...state.tags, tag] }), this.handleTags);
   }
 
-  handleRating({ target }) {
+  /* HandleRating({ target }) {
     this.ipcRenderer.send('set-rating', target.value);
     this.setState(state => ({
       options: { ...state.options, rating: target.value }
     }));
-  }
+  } */
 
   handleTags() {
     const tags = this.state.tags.map(val => val.id);
@@ -155,7 +155,7 @@ export default class Options extends Component {
                 />
               </div>
             </div>
-
+            {/*
             <div className="option">
               <h3>Illustration rating</h3>
               <div className="flex">
@@ -170,7 +170,7 @@ export default class Options extends Component {
                 </select>
               </div>
             </div>
-
+        */}
             <div className="option">
               <h3>Time interval before setting a new Wallpaper.</h3>
               <div className="flex">
