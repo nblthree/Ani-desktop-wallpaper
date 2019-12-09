@@ -51,8 +51,14 @@ export default class Options extends Component {
       suggestions: tags,
       runOnBoot: false,
       loopOverLikeList: false,
-      options:
-        (this.ipcRenderer && this.ipcRenderer.sendSync('get-options')) || []
+      options: {
+        rating: 's',
+        tags: [],
+        timeInterval: 15,
+        runOnBoot: true,
+        pause: false,
+        loopOverLikeList: false
+      }
     };
 
     // This.handleRating = this.handleRating.bind(this);
@@ -67,13 +73,13 @@ export default class Options extends Component {
     this.handleChangeComplete = this.handleChangeComplete.bind(this);
   }
 
-  componentDidMount() {
-    this.setState(state => {
-      return {
-        tags: state.options.tags.map(val => ({ id: val, text: val })),
-        runOnBoot: state.options.runOnBoot,
-        loopOverLikeList: state.options.loopOverLikeList
-      };
+  async componentDidMount() {
+    const options = await this.ipcRenderer.invoke('get-options');
+    this.setState({
+      options,
+      tags: options.tags.map(val => ({ id: val, text: val })),
+      runOnBoot: options.runOnBoot,
+      loopOverLikeList: options.loopOverLikeList
     });
   }
 

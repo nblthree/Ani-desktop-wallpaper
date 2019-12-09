@@ -39,7 +39,7 @@ const download = function(uri, filename, callback) {
   }
 };
 
-module.exports = app => {
+module.exports = (app, mainWindow) => {
   if (isDev) {
     const userDataPath = app.getPath('userData');
     app.setPath('userData', `${userDataPath} (development)`);
@@ -55,18 +55,18 @@ module.exports = app => {
     pause: false,
     loopOverLikeList: false
   };
-
-  app.setLoginItemSettings({
-    openAtLogin: { ...defaultOptions, ...(store.get('options') || {}) }
-      .runOnBoot,
-    path: app.getPath('exe')
-  });
-
-  let { timeInterval, tags, rating, pause, loopOverLikeList } = {
+  let { timeInterval, tags, rating, pause, loopOverLikeList, runOnBoot } = {
     ...defaultOptions,
     ...(store.get('options') || {})
   };
   const timer = [];
+
+  if (runOnBoot) mainWindow.hide();
+
+  app.setLoginItemSettings({
+    openAtLogin: runOnBoot,
+    path: app.getPath('exe')
+  });
 
   const likeListLooper = (list, index = 0) => {
     const tlength = timer.length;
@@ -103,9 +103,8 @@ module.exports = app => {
     );
   };
 
-  ipcMain.on('get-options', event => {
-    const options = { ...defaultOptions, ...(store.get('options') || {}) };
-    event.returnValue = options;
+  ipcMain.handle('get-options', () => {
+    return { ...defaultOptions, ...(store.get('options') || {}) };
   });
 
   ipcMain.on('set-loopOverLikeList', (event, arg) => {

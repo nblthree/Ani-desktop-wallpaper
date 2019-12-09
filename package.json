@@ -7,8 +7,10 @@
   "main": "main/index.js",
   "scripts": {
     "dev": "electron .",
-    "build": "yarn build-renderer && yarn build-app",
+    "build": "yarn build-renderer",
+    "deploy": "yarn build-renderer && yarn deploy-app",
     "build-app": "electron-builder",
+    "deploy-app": "electron-builder build --publish always",
     "build-renderer": "cross-env NODE_ENV=production next build renderer && next export renderer",
     "test": "yarn test-lint",
     "test-lint": "xo",
@@ -22,7 +24,10 @@
       "renderer/out"
     ],
     "win": {
-      "icon": "main/static/icons/icon.png"
+      "icon": "main/static/icons/icon.png",
+      "publish": {
+        "provider": "github"
+      }
     },
     "mac": {
       "icon": "main/static/icons/icon.png",
@@ -108,6 +113,7 @@
     "electron-log": "^3.0.7",
     "electron-next": "^3.1.5",
     "electron-store": "^4.0.0",
+    "electron-updater": "^4.2.0",
     "react-color": "^2.17.3",
     "react-dnd": "^5.0.0",
     "react-dnd-html5-backend": "^3.0.2",
