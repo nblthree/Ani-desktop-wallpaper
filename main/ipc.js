@@ -15,6 +15,19 @@ const move = require('./utils/move');
 const binary = join(__dirname, 'bin/TranslucentTB.exe');
 const isWinOS = process.platform === 'win32';
 
+const exists = async function(pathname) {
+  return new Promise(resolve => {
+    fs.stat(pathname, function(error) {
+      if (error === null) {
+        return resolve(true);
+      }
+
+      log.error(error);
+      return resolve(false);
+    });
+  });
+};
+
 const download = function(uri, filename, callback) {
   try {
     request.head(uri, function(error, res) {
@@ -39,7 +52,7 @@ const download = function(uri, filename, callback) {
   }
 };
 
-module.exports = (app, mainWindow) => {
+module.exports = async (app, mainWindow) => {
   if (isDev) {
     const userDataPath = app.getPath('userData');
     app.setPath('userData', `${userDataPath} (development)`);
@@ -223,8 +236,8 @@ module.exports = (app, mainWindow) => {
     func.like();
   });
 
-  ipcMain.on('set-taskbarColor', (event, arg) => {
-    if (isWinOS) {
+  ipcMain.on('set-taskbarColor', async (event, arg) => {
+    if (isWinOS && exists(binary)) {
       log.info(`set-taskbarColor: ${arg}`);
       execFile(binary, ['--no-tray', '--transparent', '--tint', arg], error => {
         if (error) {
@@ -366,7 +379,7 @@ module.exports = (app, mainWindow) => {
   }
 
   const taskbarColor = store.get('taskbarColor');
-  if (taskbarColor && isWinOS) {
+  if (taskbarColor && isWinOS && (await exists(binary))) {
     execFile(
       binary,
       ['--no-tray', '--transparent', '--tint', taskbarColor],
