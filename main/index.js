@@ -44,10 +44,13 @@ process.on('unhandledRejection', error => {
 app.on('ready', async () => {
   await prepareNext('./renderer');
 
+  const { openAtLogin } = app.getLoginItemSettings();
+
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 700,
     icon: join(__dirname, 'static/icons/icon.png'),
+    show: !openAtLogin,
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false,
@@ -94,7 +97,7 @@ app.on('ready', async () => {
   tray.on('double-click', toggleActivity);
 
   let submenuShown = false;
-  const func = await prepareIpc(app, mainWindow);
+  const func = await prepareIpc(app);
   const menu = await getContextMenu(func);
   tray.on('right-click', async event => {
     if (mainWindow.isVisible()) {

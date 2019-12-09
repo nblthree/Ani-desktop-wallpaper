@@ -52,7 +52,7 @@ const download = function(uri, filename, callback) {
   }
 };
 
-module.exports = async (app, mainWindow) => {
+module.exports = async app => {
   if (isDev) {
     const userDataPath = app.getPath('userData');
     app.setPath('userData', `${userDataPath} (development)`);
@@ -73,8 +73,6 @@ module.exports = async (app, mainWindow) => {
     ...(store.get('options') || {})
   };
   const timer = [];
-
-  if (runOnBoot) mainWindow.hide();
 
   app.setLoginItemSettings({
     openAtLogin: runOnBoot,
