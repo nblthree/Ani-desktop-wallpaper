@@ -5,7 +5,6 @@ const { join } = require('path');
 const { BrowserWindow, app, Tray, dialog } = require('electron');
 const isDev = require('electron-is-dev');
 const prepareNext = require('electron-next');
-const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
 
 const prepareIpc = require('./ipc');
@@ -112,15 +111,6 @@ app.on('ready', async () => {
 
   if (isDev) {
     mainWindow.webContents.openDevTools();
-  } else {
-    autoUpdater.checkForUpdatesAndNotify();
-    autoUpdater.on('update-available', () => {
-      mainWindow.webContents.send('update_available');
-    });
-    autoUpdater.on('update-downloaded', () => {
-      mainWindow.webContents.send('update_downloaded');
-      autoUpdater.quitAndInstall();
-    });
   }
 
   const url = isDev
