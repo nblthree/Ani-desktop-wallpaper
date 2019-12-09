@@ -2,7 +2,7 @@
   "name": "Ani-desktop-wallpaper",
   "productName": "Ani desktop wallpaper",
   "description": "Set a new wallpaper in a chosen interval with chosen tags",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "repository": "MarchWorks/Ani-desktop-wallpaper",
   "main": "main/index.js",
   "scripts": {
