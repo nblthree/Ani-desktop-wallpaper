@@ -15,7 +15,7 @@ const move = require('./utils/move');
 const binary = join(__dirname, 'bin/TranslucentTB.exe');
 const isWinOS = process.platform === 'win32';
 
-const exists = async function(pathname) {
+const exists = function(pathname) {
   return new Promise(resolve => {
     fs.stat(pathname, function(error) {
       if (error === null) {
