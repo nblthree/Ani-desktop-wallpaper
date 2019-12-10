@@ -26,5 +26,7 @@ jobs:
           yarn test
           yarn build
           yarn build-app
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
     env:
       CI: true
