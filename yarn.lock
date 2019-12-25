@@ -3038,10 +3038,10 @@ electron-is-dev@>=0.3.0, electron-is-dev@^1.1.0:
   resolved "https://registry.yarnpkg.com/electron-is-dev/-/electron-is-dev-1.1.0.tgz#b15a2a600bdc48a51a857d460e05f15b19a2522c"
   integrity sha512-Z1qA/1oHNowGtSBIcWk0pcLEqYT/j+13xUw/MYOrBUOL4X7VN0i0KCTf5SqyvMPmW5pSPKbo28wkxMxzZ20YnQ==
 
-electron-log@^3.0.7:
-  version "3.0.9"
-  resolved "https://registry.yarnpkg.com/electron-log/-/electron-log-3.0.9.tgz#53ff1fcdb2f3e4a73ea7096d2f7204121109ec6f"
-  integrity sha512-kfV4riUqW8uooYLAfrlB3EJW66W29ePipJU4/Fm8UxQekVNcR2qHI/0tiJX3oWM79VdAUiiYqL9V49lhnSIO8g==
+electron-log@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/electron-log/-/electron-log-4.0.1.tgz#77a1404b5100ad71d268029cd61a38e6c85be7cb"
+  integrity sha512-76ONPbA58z2WBgKgKIxMMB7HeTWZDeLrKF1X2P5EouAM4nLq547fBamWDArLyLCB6tS29e6zlBg+Jyo4YXGdSg==
 
 electron-next@^3.1.5:
   version "3.1.5"
