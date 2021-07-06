@@ -106,7 +106,7 @@
     "prettier": "^1.18.2",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "xo": "^0.24.0"
+    "xo": "^0.41.0"
   },
   "dependencies": {
     "electron-is-dev": "^1.1.0",
