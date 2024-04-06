@@ -8388,7 +8388,7 @@ prop-types@15.7.2, prop-types@~15.7.0:
     object-assign "^4.1.1"
     react-is "^16.8.1"
 
-prop-types@^15.5.10, prop-types@^15.6.2, prop-types@^15.8.1:
+prop-types@^15.5.10, prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -10516,10 +10516,10 @@ vm-browserify@^1.0.1:
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.2.tgz#78641c488b8e6ca91a75f511e7a3b32a86e5dda0"
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
 
-wallpaper@^4.4.1:
-  version "4.4.1"
-  resolved "https://registry.yarnpkg.com/wallpaper/-/wallpaper-4.4.1.tgz#45d8c3236e0937a742a3ce5b27fc239b73bb8859"
-  integrity sha512-eHB4VgIwGmL0NAfghxKO4UY0YZbJyvyC3HKE6LOWtjvlMiT8/ywgVOWXd2+4E7pGPWrRY92scTw+e6bgoq66zQ==
+wallpaper@^7.2.1:
+  version "7.2.1"
+  resolved "https://registry.yarnpkg.com/wallpaper/-/wallpaper-7.2.1.tgz#f6ee0314d3d2ca7b53990f1f4a64b1e725966698"
+  integrity sha512-fqAhFSF/BVg+F7Hj+9xOnDWZMM20rjuDTYtietso4P8gYOPOBzJyzbJEDocDfoCgzDV5a1x68u54/ICr70mpPw==
 
 watchpack@2.0.0-beta.13:
   version "2.0.0-beta.13"
