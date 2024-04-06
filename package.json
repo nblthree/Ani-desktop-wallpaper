@@ -109,7 +109,7 @@
     "xo": "^0.24.0"
   },
   "dependencies": {
-    "electron-is-dev": "^1.1.0",
+    "electron-is-dev": "^3.0.1",
     "electron-log": "^5.1.2",
     "electron-next": "^3.1.5",
     "electron-store": "^5.1.1",
