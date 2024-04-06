@@ -3067,7 +3067,7 @@ core-js@^1.0.0:
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-1.2.7.tgz#652294c14651db28fa93bd2d5ff2983a4f08c636"
   integrity sha1-ZSKUwUZR2yj6k70tX/KYOk8IxjY=
 
-core-js@^2.0.0, core-js@^2.4.0, core-js@~2.6.5:
+core-js@^2.0.0, core-js@^2.4.0:
   version "2.6.11"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.11.tgz#38831469f9922bded8ee21c9dc46985e0399308c"
   integrity sha512-5wjnpaT/3dV+XB4borEsnAYQchn00XSgTAWKDkEqv+K8KevjbzmofK6hfJ9TZIlpj2N0xQpazy7PiRQiWHqzWg==
@@ -8759,7 +8759,7 @@ prop-types-exact@1.2.0:
     object.assign "^4.1.0"
     reflect.ownkeys "^0.2.0"
 
-prop-types@15.7.2, prop-types@~15.7.0:
+prop-types@15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -8999,15 +8999,14 @@ react-switch@^7.0.0:
   dependencies:
     prop-types "^15.7.2"
 
-react-tag-input@^6.4.2:
-  version "6.4.2"
-  resolved "https://registry.yarnpkg.com/react-tag-input/-/react-tag-input-6.4.2.tgz#9d4ef3f8589b57ba8e1243bfbe5103d7b587e3e0"
-  integrity sha512-TTIaPYivUe6XXdaYzWsBnAsxPLdt0m2GqqH2OwWXpGcrxTyiJzBKoikl9qdaek3GBX+s+lDdcjMID0ztfPXUaw==
+react-tag-input@^6.5.4:
+  version "6.5.4"
+  resolved "https://registry.yarnpkg.com/react-tag-input/-/react-tag-input-6.5.4.tgz#17ed351d828eab3c7fb309d01ec64a1bf1b83164"
+  integrity sha512-f1/27WMLXxQudUiyuzTwdN0M5RNCv/S3raNzHQ1aRGCPkuyAZqellIp9ap81qcixQPTJsSRypkB933W7ZGlXoQ==
   dependencies:
     classnames "~2.2.6"
-    core-js "~2.6.5"
     lodash "~4.17.12"
-    prop-types "~15.7.0"
+    prop-types "^15.7.2"
 
 react@^16.12.0:
   version "16.12.0"
