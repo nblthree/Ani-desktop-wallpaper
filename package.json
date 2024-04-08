@@ -112,7 +112,7 @@
     "electron-is-dev": "^3.0.1",
     "electron-log": "^5.1.2",
     "electron-next": "^3.1.5",
-    "electron-store": "^5.1.1",
+    "electron-store": "^8.2.0",
     "react-color": "^2.19.3",
     "react-dnd": "^5.0.0",
     "react-dnd-html5-backend": "^3.0.2",
