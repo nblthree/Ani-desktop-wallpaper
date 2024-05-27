@@ -110,7 +110,7 @@
   },
   "dependencies": {
     "electron-is-dev": "^3.0.1",
-    "electron-log": "^5.1.2",
+    "electron-log": "^5.1.5",
     "electron-next": "^3.1.5",
     "electron-store": "^5.1.1",
     "react-color": "^2.19.3",
